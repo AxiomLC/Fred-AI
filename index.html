@@ -18,9 +18,7 @@
       border: 2px solid #22c55e !important;
       box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
     }
-    body.listening #icon-mic {
-      stroke: #22c55e !important;
-    }
+    body.listening #icon-mic { stroke: #22c55e !important; }
   </style>
 </head>
 <body>
@@ -44,9 +42,7 @@
     </div>
 
     <div id="controls">
-      <div id="text-input-wrap">
-        <input type="text" id="text-input-field" placeholder="Type a message..." autocomplete="off" />
-      </div>
+      <div id="text-input-wrap"><input type="text" id="text-input-field" placeholder="Type a message..." autocomplete="off" /></div>
       <div id="waveform"></div>
       <button id="mic-btn">
         <svg id="icon-mic" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--blue-glow)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
@@ -101,22 +97,20 @@
       scroll.scrollTop = scroll.scrollHeight;
     }
 
-    // --- STT Implementation ---
+    /* --- STT Implementation: The "2026 Bulletproof" Logic --- */
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     let rec = null;
+    
     if (SpeechRec) {
       rec = new SpeechRec();
-      rec.continuous = false; // Turn OFF auto-listen logic for stability
+      rec.continuous = false; 
       rec.interimResults = false;
       rec.lang = 'en-US';
 
       rec.onstart = () => { isListening = true; setState('listening'); };
-      rec.onresult = (e) => {
-        const text = e.results[0][0].transcript;
-        processInput(text);
-      };
+      rec.onresult = (e) => { processInput(e.results[0][0].transcript); };
       rec.onerror = (e) => {
-        console.error("Mic Error:", e.error);
+        console.error("DEBUG STT ERROR:", e.error);
         isListening = false;
         setState('');
       };
@@ -131,7 +125,6 @@
       addMsg('user', text);
       setState('thinking');
       typing.classList.add('active');
-
       try {
         const res = await fetch(DEV.N8N_URL, {
           method: 'POST',
@@ -139,14 +132,7 @@
           body: JSON.stringify({ text, phone: USER_PHONE, sessionId: SESSION_ID })
         });
         const raw = await res.text();
-        const isSystemError = raw.includes("headers") || raw.includes('{"') || raw.includes("Internal Server Error");
-
-        if (isSystemError) {
-          addMsg('ai', "[Logic Error]", true);
-          setState('');
-          return;
-        }
-
+        if (raw.includes("headers") || raw.includes("Internal Server Error")) throw new Error("n8n Error");
         const clean = raw.replace(/<[^>]*>/g, "").replace(/\[.*?\]/g, "");
         addMsg('ai', clean);
         await playFred(raw, clean);
@@ -175,25 +161,24 @@
       }
     }
 
-    // --- Proactive Toggle Logic ---
+    /* --- Click Event: Force Reset Logic --- */
     micBtn.onclick = () => {
       if (isListening) {
-        rec.stop();
+        rec.abort(); // Stronger than .stop()
         return;
       }
-      
-      // Stop Fred if he's talking
       if (currentAudio) currentAudio.pause();
 
-      // Ensure a clean slate: Stop and Wait 250ms
-      try { rec.stop(); } catch(e) {}
+      // Force a clean state by aborting anything "hanging"
+      try { rec.abort(); } catch(e) {}
       
+      // Wait for hardware to cycle
       setTimeout(() => {
         try {
           rec.start();
         } catch(e) {
-          console.log("Cleanup restart...");
-          rec.abort(); 
+          console.warn("Retrying start...");
+          rec.abort();
           setTimeout(() => rec.start(), 300);
         }
       }, 250);
