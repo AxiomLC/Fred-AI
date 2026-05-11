@@ -122,36 +122,48 @@
       scroll.scrollTop = scroll.scrollHeight;
     }
 
-    /* 6. STT Implementation - Fixed for Manual Control */
-    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-    let rec = null;
-    if (SpeechRec) {
-      rec = new SpeechRec();
-      rec.continuous = true; // Keeps the mic open even if you pause
-      rec.interimResults = false;
+    /* 6. STT Implementation - Resilient Version */
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null;
 
-      rec.onstart = () => { 
-        isListening = true; 
-        setState('listening'); 
-      };
+if (SpeechRec) {
+  rec = new SpeechRec();
+  rec.continuous = true; 
+  rec.interimResults = false;
+  rec.lang = 'en-US'; // Explicit lang often fixes 'network' errors in Chrome
 
-      rec.onresult = (e) => {
-        const transcript = e.results[e.results.length - 1][0].transcript;
-        rec.stop(); // Stop listening once we have a result to process
-        processInput(transcript);
-      };
+  rec.onstart = () => { 
+    isListening = true; 
+    setState('listening'); 
+    console.log("Mic is live...");
+  };
 
-      rec.onend = () => { 
-        isListening = false; 
-        if(document.body.className === 'listening') setState(''); 
-      };
-
-      rec.onerror = (e) => {
-        console.error("Speech Error:", e.error);
-        setState('');
-      };
+  rec.onresult = (e) => {
+    const transcript = e.results[e.results.length - 1][0].transcript;
+    if (transcript.trim()) {
+      rec.stop(); // We stop manually only once we have text
+      processInput(transcript);
     }
+  };
 
+  rec.onerror = (e) => {
+    console.error("Speech Error:", e.error);
+    // If it's a network error, it's often a momentary glitch
+    if (e.error === 'network') {
+       statusTxt.textContent = 'MIC ERROR - RETRYING...';
+    }
+    isListening = false;
+    setState('');
+  };
+
+  rec.onend = () => { 
+    // Only reset state if we aren't already moving to 'thinking'
+    if (document.body.className === 'listening') {
+      isListening = false; 
+      setState(''); 
+    }
+  };
+}
     /* 7. Input Processing */
     async function processInput(text) {
       if (currentAudio) currentAudio.pause();
