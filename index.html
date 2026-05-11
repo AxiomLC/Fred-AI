@@ -13,9 +13,7 @@
   <div id="app">
     <div id="logo-wrap">
       <img src="https://media.airpg.ai/icon2-circle.png" alt="W57th" />
-      <div id="brand-line">
-        <span id="brand-w57">W57TH</span> <span id="brand-fred">Fred AI</span>
-      </div>
+      <div id="brand-line"><span id="brand-fred">Fred AI</span></div>
       <div id="tagline">Voice Intelligence · New York</div>
     </div>
 
@@ -27,19 +25,14 @@
     </div>
 
     <div id="controls">
-      <div id="text-input-wrap" style="display:none;">
-        <input type="text" id="text-input-field" placeholder="Type a message..." autocomplete="off" />
-      </div>
       <div id="waveform"></div>
       <button id="mic-btn">
-        <svg id="icon-mic" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        <svg id="icon-mic" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--blue-glow)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
       </button>
-      <div id="status-row">
-        <span id="status-text">TAP TO START</span>
-        <span id="keyboard-toggle" style="cursor:pointer; margin-left:10px;">⌨️</span>
+      <div id="status-text-row">
+        <span id="status-text">MIC OFF</span>
       </div>
     </div>
-    <div id="footer">W57TH · FRED AI · POWERED BY AIRPG.AI</div>
   </div>
 
   <script>
@@ -53,38 +46,31 @@
     const micBtn = document.getElementById('mic-btn'),
           statusTxt = document.getElementById('status-text'),
           scroll = document.getElementById('transcript-scroll'),
-          typing = document.getElementById('typing'),
-          kbdToggle = document.getElementById('keyboard-toggle'),
-          kbdWrap = document.getElementById('text-input-wrap'),
-          kbdInput = document.getElementById('text-input-field');
+          typing = document.getElementById('typing');
 
     let isListening = false, currentAudio = null;
 
-    /* ── 1. HARD TOGGLE MIC (Manual Only) ── */
+    // 1. STT Setup
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     const rec = new SpeechRec();
-    rec.continuous = true; 
+    rec.continuous = true; // STAYS ON until manual toggle
     rec.interimResults = false;
 
-    rec.onstart = () => { 
-      isListening = true; 
-      document.body.classList.add('listening'); 
-      statusTxt.textContent = 'MIC LIVE'; 
-    };
-    
-    rec.onend = () => { 
-      if(isListening) rec.start(); // Auto-restart if browser drops it, until user hits stop
-    };
-
+    rec.onstart = () => { isListening = true; document.body.className = 'listening'; statusTxt.textContent = 'MIC LIVE'; };
+    rec.onend = () => { if(isListening) rec.start(); }; // Restart if it times out naturally
     rec.onresult = (e) => {
-      const text = e.results[e.results.length - 1][0].transcript;
-      if (text.trim().length > 0) processInput(text);
+        const text = e.results[e.results.length - 1][0].transcript;
+        processInput(text);
     };
 
-    /* ── 2. LOGIC GUARD: NO TEXT = NO GROK ── */
+    // 2. Logic Guard (NO TEXT = NO GROK)
     async function processInput(text) {
-      if (currentAudio) currentAudio.pause();
-      addMsg('user', text);
+      if (!text || text.trim().length < 1) return;
+      
+      const uMsg = document.createElement('div');
+      uMsg.className = 'msg user';
+      uMsg.innerHTML = `<span class="msg-label">YOU</span><span class="msg-text">${text}</span>`;
+      scroll.insertBefore(uMsg, typing);
       typing.classList.add('active');
 
       try {
@@ -93,79 +79,56 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text })
         });
-
-        const raw = await res.text();
-
-        // SHIELD: If n8n sends headers, JSON, or an error, kill the flow here.
-        const isGarbage = raw.includes("headers") || raw.includes("{") || raw.includes("Internal Server Error") || !raw.trim();
         
-        if (isGarbage) {
-          addMsg('ai', `[System Halt: Invalid Response from n8n]`, true);
-          return; // STOP: Do not update scroll box with clean text, do not call Grok.
+        const raw = await res.text();
+        
+        // CRITICAL FIX: Block Grok if response looks like an error or system dump
+        if (!raw || raw.includes("headers") || raw.includes("Internal Server Error")) {
+            addAiMsg("[System Logic Error]");
+            return; // EXIT - DO NOT CALL GROK
         }
 
-        const clean = raw.replace(/<[^>]*>/g, "").replace(/\[.*?\]/g, "");
-        addMsg('ai', clean);
-        
-        // Parallel call to Grok only with verified text
-        playFred(raw);
+        addAiMsg(raw);
+        await playFred(raw); // Only fires if text is valid
 
       } catch (err) {
-        addMsg('ai', `[System Halt: Connection Failed]`, true);
+        addAiMsg(`[Connection Error]`);
       } finally {
         typing.classList.remove('active');
       }
     }
 
-    function addMsg(role, text, isError = false) {
+    function addAiMsg(text) {
       const m = document.createElement('div');
-      m.className = `msg ${role} ${isError ? 'system-error' : ''}`;
-      m.innerHTML = `<span class="msg-label">${role==='user'?'YOU':'FRED AI'}</span><span class="msg-text">${text}</span>`;
+      m.className = 'msg ai';
+      m.innerHTML = `<span class="msg-label">FRED AI</span><span class="msg-text">${text}</span>`;
       scroll.insertBefore(m, typing);
       scroll.scrollTop = scroll.scrollHeight;
     }
 
-    /* ── 3. GROK VOICE CALL (PARALLEL) ── */
+    // 3. Parallel TTS
     async function playFred(text) {
       try {
         const res = await fetch(DEV.GROK_URL, {
           method: "POST",
           headers: { "Authorization": `Bearer ${DEV.GROK_KEY}`, "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            text: `<soft><fast>${text}</fast></soft>`, 
-            voice_id: DEV.VOICE_ID, 
-            language: "en" 
-          }),
+          body: JSON.stringify({ text: `<soft><fast>${text}</fast></soft>`, voice_id: DEV.VOICE_ID, language: "en" }),
         });
-        if(!res.ok) return;
         const blob = await res.blob();
         currentAudio = new Audio(URL.createObjectURL(blob));
         await currentAudio.play();
-      } catch (e) { console.error("Grok Blocked."); }
+      } catch (e) { console.error("Grok failed"); }
     }
 
-    /* ── 4. UI TOGGLES ── */
+    // 4. Toggle Logic
     micBtn.onclick = () => {
       if (!isListening) {
         rec.start();
       } else {
         isListening = false;
         rec.stop();
-        document.body.classList.remove('listening');
+        document.body.className = '';
         statusTxt.textContent = 'MIC OFF';
-      }
-    };
-
-    kbdToggle.onclick = () => {
-      kbdWrap.style.display = kbdWrap.style.display === 'flex' ? 'none' : 'flex';
-      if(kbdWrap.style.display === 'flex') kbdInput.focus();
-    };
-
-    kbdInput.onkeydown = (e) => {
-      if (e.key === 'Enter' && kbdInput.value.trim()) {
-        processInput(kbdInput.value);
-        kbdInput.value = '';
-        kbdWrap.style.display = 'none';
       }
     };
   </script>
