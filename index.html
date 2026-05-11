@@ -3,22 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>W57th · Fred AI Voice</title>
+  <title>W57th · Fred AI</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
   <div id="bg"></div>
   <div id="bg-vignette"></div>
-
   <div id="app">
     <div id="logo-wrap">
       <img src="https://media.airpg.ai/icon2-circle.png" alt="W57th logo" />
-      <div id="brand-line">
-        <span id="brand-w57">W57TH</span>
-        <span id="brand-fred">· Fred AI</span>
-      </div>
+      <div id="brand-line"><span id="brand-w57">W57TH</span><span id="brand-fred">· Fred AI</span></div>
       <div id="tagline">Voice Intelligence · New York</div>
     </div>
 
@@ -27,7 +22,7 @@
       <div id="transcript-scroll">
         <div class="msg ai">
           <span class="msg-label">FRED AI</span>
-          <span class="msg-text">Hello. I'm Fred. Tap the mic to speak or use the keyboard.</span>
+          <span class="msg-text">Yeah? What's on your mind? I'm listening.</span>
         </div>
         <div id="typing"><span></span><span></span><span></span></div>
       </div>
@@ -37,53 +32,45 @@
       <div id="text-input-wrap">
         <input type="text" id="text-input-field" placeholder="Type a message..." autocomplete="off" />
       </div>
-
       <div id="waveform"></div>
-
       <button id="mic-btn" aria-label="Tap to speak">
         <svg id="icon-mic" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--blue-glow)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
         <svg id="icon-speaker" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
       </button>
-
       <div id="status-row">
         <span id="status-text">TAP TO SPEAK</span>
         <span id="keyboard-toggle">⌨️</span>
       </div>
     </div>
-
     <div id="footer">W57TH · FRED AI · POWERED BY AIRPG.AI</div>
   </div>
 
   <script>
-    /* ── CONFIGURATION ── */
     const DEV = {
       N8N_URL: "https://n8n.airpg.ai/webhook/fred",
       GROK_URL: "https://api.x.ai/v1/tts",
       GROK_KEY: "xai-5aDdDimj7pOBE6TxvGng1W4REEOlezq6ZHhHVdy9lunH7uWKsjIzA9mQimctnv9d1ItfI2j3YPCEh4cB",
-      VOICE_ID: "96819d0bd28d",
-      STT_LANG: "en-US"
+      VOICE_ID: "96819d0bd28d"
     };
 
     const _urlPhone = new URLSearchParams(window.location.search).get('phone');
     if (_urlPhone) localStorage.setItem('w57_phone', _urlPhone);
-    const USER_PHONE = _urlPhone || localStorage.getItem('w57_phone') || null;
+    const USER_PHONE = _urlPhone || localStorage.getItem('w57_phone') || "";
     const SESSION_ID = USER_PHONE || ('sess_' + Math.random().toString(36).slice(2, 9));
 
-    /* ── DOM REFS ── */
     const micBtn = document.getElementById('mic-btn'),
           statusTxt = document.getElementById('status-text'),
           scroll = document.getElementById('transcript-scroll'),
           typing = document.getElementById('typing'),
           iconMic = document.getElementById('icon-mic'),
           iconSpk = document.getElementById('icon-speaker'),
+          waveform = document.getElementById('waveform'),
           kbdToggle = document.getElementById('keyboard-toggle'),
           kbdWrap = document.getElementById('text-input-wrap'),
-          kbdInput = document.getElementById('text-input-field'),
-          waveform = document.getElementById('waveform');
+          kbdInput = document.getElementById('text-input-field');
 
     let isListening = false, isSpeaking = false, currentAudio = null;
 
-    /* Build Waveform */
     for (let i = 0; i < 28; i++) {
       const b = document.createElement('div');
       b.className = 'bar';
@@ -109,19 +96,17 @@
       scroll.scrollTop = scroll.scrollHeight;
     }
 
-    /* ── SPEECH RECOGNITION ── */
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     let rec = null;
     if (SpeechRec) {
       rec = new SpeechRec();
-      rec.lang = DEV.STT_LANG;
+      rec.lang = "en-US";
       rec.onstart = () => { isListening = true; setState('listening'); };
       rec.onresult = (e) => processInput(e.results[0][0].transcript);
       rec.onend = () => { isListening = false; if(!isSpeaking) setState(''); };
       rec.onerror = (e) => { if(e.error !== 'aborted') addMsg('ai', `[Mic Error: ${e.error}]`); setState(''); };
     }
 
-    /* ── FLOW LOGIC ── */
     async function processInput(text) {
       if (currentAudio) currentAudio.pause();
       addMsg('user', text);
@@ -132,16 +117,20 @@
         const res = await fetch(DEV.N8N_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text, sessionId: SESSION_ID, phone: USER_PHONE })
+          body: JSON.stringify({ 
+            text: text, 
+            phone: USER_PHONE, 
+            sessionId: SESSION_ID,
+            post_status: "active" 
+          })
         });
         const raw = await res.text();
-        
-        // Regex to strip <tag> and [vocal cues] for the visual display
+        // Clear tags for visual display
         const clean = raw.replace(/<[^>]*>/g, "").replace(/\[.*?\]/g, "");
         addMsg('ai', clean);
         await playFred(raw, clean);
       } catch (err) {
-        addMsg('ai', `⚠ Connection issue. Check CORS on n8n.`);
+        addMsg('ai', `⚠ Fred's having a scotch. (Connection error)`);
         setState('');
       }
     }
@@ -165,7 +154,6 @@
       }
     }
 
-    /* ── UI EVENTS ── */
     micBtn.onclick = () => {
       if (isListening) rec.stop();
       else { if(isSpeaking && currentAudio) currentAudio.pause(); rec.start(); }
