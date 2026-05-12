@@ -117,7 +117,7 @@
            "Rex"  — Confident & clear
            "Sal"  — Smooth & balanced
          ────────────────────────────────────────────────── */
-      VOICE_ID:  "Eve",
+      VOICE_ID:  "Rex",
 
       /* ── OUTPUT FORMAT ────────────────────────────────────
          Lowest latency:  mp3 / 24000 / 128000  (API default, smallest payload)
@@ -134,6 +134,14 @@
       /* Web Speech API recognition language */
       STT_LANG:  "en-US"
     };
+
+    /* ════════════════════════════════════════════════════════
+       GROK PAYLOAD WRAPPER
+       DEV: Every text payload sent to xAI TTS is sandwiched
+       in these tags. Change the tags here to affect ALL calls.
+       Uses xAI speech wrapping tags (see tag list below).
+       ════════════════════════════════════════════════════════ */
+    const GROK_WRAP = (text) => `<soft><lower-pitch><fast>${text}</fast></lower-pitch></soft>`;
 
     /* ════════════════════════════════════════════════════════
        GROK RESPONSE FORMAT
@@ -288,7 +296,7 @@
             'Content-Type':  'application/json'
           },
           body: JSON.stringify({
-            text:      tagged,
+            text:      GROK_WRAP(tagged),
             voice_id:  DEV.VOICE_ID,
             language:  DEV.LANGUAGE,
             output_format: {
