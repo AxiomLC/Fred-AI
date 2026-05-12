@@ -1,6 +1,5 @@
-name = "fred-ai"
-main = "worker.js"
-compatibility_date = "2024-01-01"
-
-[assets]
-directory = "./public"
+export default {
+  async fetch(request, env) {
+    return env.ASSETS.fetch(request);
+  }
+};
