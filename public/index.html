@@ -8,11 +8,10 @@
   <!-- ═══════════════════════════════════════════════
        FAVICON / BROWSER TAB ICON
        DEV: Replace href with your logo path or URL.
-            Using the same file as the logo keeps them in sync.
-            For a hosted file: href="https://media.airpg.ai/icon2-circle.png"
-            For a repo file:   href="logo.png"
+            Since style.css also loads from workers.dev, use the same base.
+            workers.dev: href="https://fred-ai.davesartori.workers.dev/logo.png"
        ═══════════════════════════════════════════════ -->
-  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="icon" type="image/png" href="https://fred-ai.davesartori.workers.dev/logo.png" />
 
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://fred-ai.davesartori.workers.dev/style.css" />
@@ -32,7 +31,7 @@
               Remote URL:  src="https://media.airpg.ai/icon2-circle.png"
          ═══════════════════════════════════════════ -->
     <div id="logo-wrap">
-      <img src="logo.png" alt="W57th logo" />
+      <img src="https://fred-ai.davesartori.workers.dev/logo.png" alt="W57th logo" />
       <div id="brand-line">
         <span id="brand-fred">Fred AI</span>
         <span id="brand-w57">· W57TH</span>
@@ -111,13 +110,10 @@
 
       /* ── VOICE SELECTION ──────────────────────────────────
          Available xAI English voices (case-sensitive):
-           "Eve"  — Energetic & upbeat
-           "Ara"  — Warm & friendly
-           "Leo"  — Authoritative & strong
-           "Rex"  — Confident & clear
-           "Sal"  — Smooth & balanced
+           "Eve"  — Energetic & upbeat  "Ara"  — Warm & friendly  "Leo"  — Authoritative & strong "Rex"  — Confident & clear "Sal"  — Smooth & balanced
+           508zcevj5okc Fraink
          ────────────────────────────────────────────────── */
-      VOICE_ID:  "Rex",
+      VOICE_ID:  "508zcevj5okc",
 
       /* ── OUTPUT FORMAT ────────────────────────────────────
          Lowest latency:  mp3 / 24000 / 128000  (API default, smallest payload)
@@ -274,8 +270,9 @@
         });
         const raw   = await res.text();
         const clean = cleanForDisplay(raw);
+        // Parallel — scroll and TTS fire simultaneously, neither blocks the other
         addMsg('ai', clean);
-        await playFred(raw, clean);
+        playFred(raw, clean);
       } catch (err) {
         addMsg('ai', '⚠ Connection issue. Check CORS on n8n.');
         setState('');
