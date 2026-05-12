@@ -113,7 +113,7 @@
            "Eve"  — Energetic & upbeat  "Ara"  — Warm & friendly  "Leo"  — Authoritative & strong "Rex"  — Confident & clear "Sal"  — Smooth & balanced
            508zcevj5okc Fraink
          ────────────────────────────────────────────────── */
-      VOICE_ID:  "508zcevj5okc",
+      VOICE_ID:  "4wyaaj01zqcd",
 
       /* ── OUTPUT FORMAT ────────────────────────────────────
          Lowest latency:  mp3 / 24000 / 128000  (API default, smallest payload)
@@ -131,30 +131,10 @@
       STT_LANG:  "en-US"
     };
 
-    /* ════════════════════════════════════════════════════════
-       GROK PAYLOAD WRAPPER
-       DEV: Every text payload sent to xAI TTS is sandwiched
-       in these tags. Change the tags here to affect ALL calls.
-       Uses xAI speech wrapping tags (see tag list below).
-       ════════════════════════════════════════════════════════ */
-    const GROK_WRAP = (text) => `<soft><lower-pitch><fast>${text}</fast></lower-pitch></soft>`;
+    const GROK_WRAP = (text) => `<lower-pitch><fast>${text}</fast></lower-pitch>`;
 
     /* ════════════════════════════════════════════════════════
-       GROK RESPONSE FORMAT
-       DEV: n8n should return plain text or text with xAI
-       speech tags. The stripping regex below removes ALL
-       known tags before displaying text in the transcript.
-
-       Expected n8n response shape (plain text):
-         "Sure! [pause] Here is your answer. <soft>Take care.</soft>"
-
-       Inline tags stripped:  [pause] [long-pause] [hum-tune]
-         [laugh] [chuckle] [giggle] [cry] [tsk] [tongue-click]
-         [lip-smack] [breath] [inhale] [exhale] [sigh]
-
-       Wrapping tags stripped: <soft> <whisper> <loud>
-         <build-intensity> <decrease-intensity> <higher-pitch>
-         <lower-pitch> <slow> <fast> <sing-song> <singing>
+       Wrapping tags stripped: <soft> <whisper> <loud> <build-intensity> <decrease-intensity> <higher-pitch>  <lower-pitch> <slow> <fast> <sing-song> <singing>
          <laugh-speak> <emphasis>  (and their closing variants)
        ════════════════════════════════════════════════════════ */
     const STRIP_INLINE  = /\[(pause|long-pause|hum-tune|laugh|chuckle|giggle|cry|tsk|tongue-click|lip-smack|breath|inhale|exhale|sigh)\]/gi;
