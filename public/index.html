@@ -149,13 +149,23 @@
         .trim();
     }
 
-    /* ════════════════════════════════════════════════════════
-       SESSION
-       ════════════════════════════════════════════════════════ */
-    const _urlPhone  = new URLSearchParams(window.location.search).get('phone');
-    if (_urlPhone) localStorage.setItem('w57_phone', _urlPhone);
-    const USER_PHONE = _urlPhone || localStorage.getItem('w57_phone') || null;
-    const SESSION_ID = USER_PHONE || ('sess_' + Math.random().toString(36).slice(2, 9));
+/* ════════════════════════════════════════════════════════
+   SESSION - Fixed for DB Logic
+   ════════════════════════════════════════════════════════ */
+// 1. Handle Phone (Identity)
+const _urlPhone = new URLSearchParams(window.location.search).get('phone');
+if (_urlPhone) localStorage.setItem('w57_phone', _urlPhone);
+const USER_PHONE = localStorage.getItem('w57_phone') || null;
+
+// 2. Handle Session (Device Fingerprint)
+// We generate a random session ONLY if one doesn't exist in storage.
+// It NO LONGER defaults to the Phone number.
+let savedSess = localStorage.getItem('w57_session');
+if (!savedSess) {
+    savedSess = 'sess_' + Math.random().toString(36).slice(2, 9);
+    localStorage.setItem('w57_session', savedSess);
+}
+const SESSION_ID = savedSess;
 
     /* ════════════════════════════════════════════════════════
        DOM REFS
