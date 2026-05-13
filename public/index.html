@@ -111,9 +111,9 @@
       /* ── VOICE SELECTION ──────────────────────────────────
          Available xAI English voices (case-sensitive):
            "Eve"  — Energetic & upbeat  "Ara"  — Warm & friendly  "Leo"  — Authoritative & strong "Rex"  — Confident & clear "Sal"  — Smooth & balanced
-           508zcevj5okc Fraink Daniel Liam Rex
+           508zcevj5okc 96819d0bd28d Fraink Daniel Liam Rex
          ────────────────────────────────────────────────── */
-      VOICE_ID:  "96819d0bd28d",
+      VOICE_ID:  "Rex",
 
       /* ── OUTPUT FORMAT ────────────────────────────────────
          Lowest latency:  mp3 / 24000 / 128000  (API default, smallest payload)
@@ -131,7 +131,7 @@
       STT_LANG:  "en-US"
     };
 
-    const GROK_WRAP = (text) => `<build-intensity><lower-pitch><fast>${text}</fast></lower-pitch></build-intensity>`;
+    const GROK_WRAP = (text) => `<lower-pitch><fast>${text}</fast></lower-pitch>`;
 
     /* ════════════════════════════════════════════════════════
        Wrapping tags stripped: <soft> <whisper> <loud> <build-intensity> <decrease-intensity> <higher-pitch>  <lower-pitch> <slow> <fast> <sing-song> <singing>
