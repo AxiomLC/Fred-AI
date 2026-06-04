@@ -1,334 +1,453 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fred AI · W57th</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Fred AI · W57th</title>
 
-  <!-- ═══════════════════════════════════════════════
+        <!-- ═══════════════════════════════════════════════
+       ver 1.0 Rest to Grok
+
        FAVICON / BROWSER TAB ICON
        DEV: Replace href with your logo path or URL.
             Since style.css also loads from workers.dev, use the same base.
             workers.dev: href="https://fred-ai.davesartori.workers.dev/logo.png"
        ═══════════════════════════════════════════════ -->
-  <link rel="icon" type="image/png" href="https://fred-ai.davesartori.workers.dev/logo.png" />
+        <link
+            rel="icon"
+            type="image/png"
+            href="https://fred-ai.davesartori.workers.dev/logo.png"
+        />
 
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://fred-ai.davesartori.workers.dev/style.css" />
-</head>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://fred-ai.davesartori.workers.dev/style.css"
+        />
+    </head>
 
-<body>
-  <div id="bg"></div>
-  <div id="bg-vignette"></div>
+    <body>
+        <div id="bg"></div>
+        <div id="bg-vignette"></div>
 
-  <div id="app">
-
-    <!-- ═══════════════════════════════════════════
+        <div id="app">
+            <!-- ═══════════════════════════════════════════
          LOGO
          DEV: Change src to swap the logo image.
               Same file is used for the favicon above.
               Local file:  src="logo.png"
               Remote URL:  src="https://media.airpg.ai/icon2-circle.png"
          ═══════════════════════════════════════════ -->
-    <div id="logo-wrap">
-      <img src="https://fred-ai.davesartori.workers.dev/logo.png" alt="W57th logo" />
-      <div id="brand-line">
-        <span id="brand-fred">Fred AI</span>
-        <span id="brand-w57">· W57TH</span>
-      </div>
-      <div id="tagline">Voice Intelligence · New York</div>
-    </div>
+            <div id="logo-wrap">
+                <img
+                    src="https://fred-ai.davesartori.workers.dev/logo.png"
+                    alt="W57th logo"
+                />
+                <div id="brand-line">
+                    <span id="brand-fred">Fred AI</span>
+                    <span id="brand-w57">· W57TH</span>
+                </div>
+                <div id="tagline">Voice Intelligence · New York</div>
+            </div>
 
-    <!-- TRANSCRIPT BOX -->
-    <div id="transcript-wrap">
-      <div id="transcript-header"><span class="dot"></span> LIVE CONVERSATION</div>
-      <div id="transcript-scroll">
-        <div class="msg ai">
-          <span class="msg-label">FRED AI</span>
-          <!-- ═══════════════════════════════════════
+            <!-- TRANSCRIPT BOX -->
+            <div id="transcript-wrap">
+                <div id="transcript-header">
+                    <span class="dot"></span> LIVE CONVERSATION
+                </div>
+                <div id="transcript-scroll">
+                    <div class="msg ai">
+                        <span class="msg-label">FRED AI</span>
+                        <!-- ═══════════════════════════════════════
                OPENING MESSAGE
                DEV: Change this text to set Fred's greeting.
                ═══════════════════════════════════════ -->
-          <span class="msg-text">Hello. I'm Fred. Tap the mic to speak or use the keyboard.</span>
+                        <span class="msg-text"
+                            >Hello. I'm Fred. Tap the mic to speak or use the
+                            keyboard.</span
+                        >
+                    </div>
+                    <div id="typing">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTROLS -->
+            <div id="controls">
+                <div id="text-input-wrap">
+                    <input
+                        type="text"
+                        id="text-input-field"
+                        placeholder="Type a message..."
+                        autocomplete="off"
+                    />
+                </div>
+
+                <div id="waveform"></div>
+
+                <!-- Mic button — turns green border when listening (class: body.listening) -->
+                <button id="mic-btn" aria-label="Tap to speak">
+                    <svg
+                        id="icon-mic"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"
+                        />
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                        <line x1="12" y1="19" x2="12" y2="23" />
+                        <line x1="8" y1="23" x2="16" y2="23" />
+                    </svg>
+                    <svg
+                        id="icon-speaker"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#a78bfa"
+                        stroke-width="2"
+                        style="display: none"
+                    >
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    </svg>
+                </button>
+
+                <div id="status-row">
+                    <span id="status-text">TAP TO SPEAK</span>
+                    <span id="keyboard-toggle">⌨️</span>
+                </div>
+            </div>
+
+            <div id="footer">W57TH · FRED AI · POWERED BY AIRPG.AI</div>
         </div>
-        <div id="typing"><span></span><span></span><span></span></div>
-      </div>
-    </div>
 
-    <!-- CONTROLS -->
-    <div id="controls">
-      <div id="text-input-wrap">
-        <input type="text" id="text-input-field" placeholder="Type a message..." autocomplete="off" />
-      </div>
-
-      <div id="waveform"></div>
-
-      <!-- Mic button — turns green border when listening (class: body.listening) -->
-      <button id="mic-btn" aria-label="Tap to speak">
-        <svg id="icon-mic" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-          <line x1="12" y1="19" x2="12" y2="23"/>
-          <line x1="8" y1="23" x2="16" y2="23"/>
-        </svg>
-        <svg id="icon-speaker" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" style="display:none">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-        </svg>
-      </button>
-
-      <div id="status-row">
-        <span id="status-text">TAP TO SPEAK</span>
-        <span id="keyboard-toggle">⌨️</span>
-      </div>
-    </div>
-
-    <div id="footer">W57TH · FRED AI · POWERED BY AIRPG.AI</div>
-  </div>
-
-  <script>
-    /* ════════════════════════════════════════════════════════
+        <script>
+            /* ════════════════════════════════════════════════════════
        VERSION
        ════════════════════════════════════════════════════════ */
-    const APP_VERSION = "1.1.0";
-    const APP_DATE    = "2026-05-12";
+            const APP_VERSION = "1.1.0";
+            const APP_DATE = "2026-05-12";
 
-    /* ════════════════════════════════════════════════════════
+            /* ════════════════════════════════════════════════════════
        DEV CONFIG  —  change these values to reconfigure
        ════════════════════════════════════════════════════════ */
-    const DEV = {
+            const DEV = {
+                /* N8N webhook that receives user text and returns Fred's reply */
+                N8N_URL: "https://n8n.airpg.ai/webhook/fred",
 
-      /* N8N webhook that receives user text and returns Fred's reply */
-      N8N_URL:   "https://n8n.airpg.ai/webhook/fred",
+                /* xAI TTS endpoint — do not change unless xAI updates it */
+                GROK_URL: "https://api.x.ai/v1/tts",
 
-      /* xAI TTS endpoint — do not change unless xAI updates it */
-      GROK_URL:  "https://api.x.ai/v1/tts",
+                /* xAI API key — move to a backend proxy to hide from client */
+                GROK_KEY:
+                    "xai-5aDdDimj7pOBE6TxvGng1W4REEOlezq6ZHhHVdy9lunH7uWKsjIzA9mQimctnv9d1ItfI2j3YPCEh4cB",
 
-      /* xAI API key — move to a backend proxy to hide from client */
-      GROK_KEY:  "xai-5aDdDimj7pOBE6TxvGng1W4REEOlezq6ZHhHVdy9lunH7uWKsjIzA9mQimctnv9d1ItfI2j3YPCEh4cB",
-
-      /* ── VOICE SELECTION ──────────────────────────────────
+                /* ── VOICE SELECTION ──────────────────────────────────
          Available xAI English voices (case-sensitive):
            "Eve"  — Energetic & upbeat  "Ara"  — Warm & friendly  "Leo"  — Authoritative & strong "Rex"  — Confident & clear "Sal"  — Smooth & balanced
            508zcevj5okc 96819d0bd28d Fraink Daniel Liam Rex
          ────────────────────────────────────────────────── */
-      VOICE_ID:  "Rex",
+                VOICE_ID: "Rex",
 
-      /* ── OUTPUT FORMAT ────────────────────────────────────
+                /* ── OUTPUT FORMAT ────────────────────────────────────
          Lowest latency:  mp3 / 24000 / 128000  (API default, smallest payload)
          Best quality:    mp3 / 44100 / 192000
          Current setting optimised for speed over quality.
          ────────────────────────────────────────────────── */
-      AUDIO_CODEC:       "mp3",
-      AUDIO_SAMPLE_RATE: 24000,
-      AUDIO_BIT_RATE:    128000,
+                AUDIO_CODEC: "mp3",
+                AUDIO_SAMPLE_RATE: 24000,
+                AUDIO_BIT_RATE: 128000,
 
-      /* BCP-47 language code — "en" or "auto" to auto-detect */
-      LANGUAGE:  "en",
+                /* BCP-47 language code — "en" or "auto" to auto-detect */
+                LANGUAGE: "en",
 
-      /* Web Speech API recognition language */
-      STT_LANG:  "en-US"
-    };
+                /* Web Speech API recognition language */
+                STT_LANG: "en-US",
+            };
 
-    const GROK_WRAP = (text) => `<lower-pitch>${text}</lower-pitch>`;
+            const GROK_WRAP = (text) => `<lower-pitch>${text}</lower-pitch>`;
 
-    /* ════════════════════════════════════════════════════════
+            /* ════════════════════════════════════════════════════════
        Wrapping tags stripped: <soft> <whisper> <loud> <build-intensity> <decrease-intensity> <higher-pitch>  <lower-pitch> <slow> <fast> <sing-song> <singing>
          <laugh-speak> <emphasis>  (and their closing variants)
        ════════════════════════════════════════════════════════ */
-    const STRIP_INLINE  = /\[(pause|long-pause|hum-tune|laugh|chuckle|giggle|cry|tsk|tongue-click|lip-smack|breath|inhale|exhale|sigh)\]/gi;
-    const STRIP_WRAP    = /<\/?(soft|whisper|loud|build-intensity|decrease-intensity|higher-pitch|lower-pitch|slow|fast|sing-song|singing|laugh-speak|emphasis)>/gi;
-    const STRIP_HTML    = /<[^>]*>/g;
+            const STRIP_INLINE =
+                /\[(pause|long-pause|hum-tune|laugh|chuckle|giggle|cry|tsk|tongue-click|lip-smack|breath|inhale|exhale|sigh)\]/gi;
+            const STRIP_WRAP =
+                /<\/?(soft|whisper|loud|build-intensity|decrease-intensity|higher-pitch|lower-pitch|slow|fast|sing-song|singing|laugh-speak|emphasis)>/gi;
+            const STRIP_HTML = /<[^>]*>/g;
 
-    function cleanForDisplay(raw) {
-      return raw
-        .replace(STRIP_INLINE, "")
-        .replace(STRIP_WRAP,   "")
-        .replace(STRIP_HTML,   "")
-        .trim();
-    }
+            function cleanForDisplay(raw) {
+                return raw
+                    .replace(STRIP_INLINE, "")
+                    .replace(STRIP_WRAP, "")
+                    .replace(STRIP_HTML, "")
+                    .trim();
+            }
 
-/* ════════════════════════════════════════════════════════
+            /* ════════════════════════════════════════════════════════
    SESSION - Fixed for DB Logic
    ════════════════════════════════════════════════════════ */
-// 1. Handle Phone (Identity)
-const _urlPhone = new URLSearchParams(window.location.search).get('phone');
-if (_urlPhone) localStorage.setItem('w57_phone', _urlPhone);
-const USER_PHONE = localStorage.getItem('w57_phone') || null;
+            // 1. Handle Phone (Identity)
+            const _urlPhone = new URLSearchParams(window.location.search).get(
+                "phone",
+            );
+            if (_urlPhone) localStorage.setItem("w57_phone", _urlPhone);
+            const USER_PHONE = localStorage.getItem("w57_phone") || null;
 
-// 2. Handle Session (Device Fingerprint)
-// We generate a random session ONLY if one doesn't exist in storage.
-// It NO LONGER defaults to the Phone number.
-let savedSess = localStorage.getItem('w57_session');
-if (!savedSess) {
-    savedSess = 'sess_' + Math.random().toString(36).slice(2, 9);
-    localStorage.setItem('w57_session', savedSess);
-}
-const SESSION_ID = savedSess;
+            // 2. Handle Session (Device Fingerprint)
+            // We generate a random session ONLY if one doesn't exist in storage.
+            // It NO LONGER defaults to the Phone number.
+            let savedSess = localStorage.getItem("w57_session");
+            if (!savedSess) {
+                savedSess = "sess_" + Math.random().toString(36).slice(2, 9);
+                localStorage.setItem("w57_session", savedSess);
+            }
+            const SESSION_ID = savedSess;
 
-    /* ════════════════════════════════════════════════════════
+            /* ════════════════════════════════════════════════════════
        DOM REFS
        ════════════════════════════════════════════════════════ */
-    const micBtn    = document.getElementById('mic-btn'),
-          statusTxt = document.getElementById('status-text'),
-          scroll    = document.getElementById('transcript-scroll'),
-          typing    = document.getElementById('typing'),
-          iconMic   = document.getElementById('icon-mic'),
-          iconSpk   = document.getElementById('icon-speaker'),
-          kbdToggle = document.getElementById('keyboard-toggle'),
-          kbdWrap   = document.getElementById('text-input-wrap'),
-          kbdInput  = document.getElementById('text-input-field'),
-          waveform  = document.getElementById('waveform');
+            const micBtn = document.getElementById("mic-btn"),
+                statusTxt = document.getElementById("status-text"),
+                scroll = document.getElementById("transcript-scroll"),
+                typing = document.getElementById("typing"),
+                iconMic = document.getElementById("icon-mic"),
+                iconSpk = document.getElementById("icon-speaker"),
+                kbdToggle = document.getElementById("keyboard-toggle"),
+                kbdWrap = document.getElementById("text-input-wrap"),
+                kbdInput = document.getElementById("text-input-field"),
+                waveform = document.getElementById("waveform");
 
-    let isListening = false, isSpeaking = false, currentAudio = null;
+            let isListening = false,
+                isSpeaking = false,
+                currentAudio = null;
 
-    /* ════════════════════════════════════════════════════════
+            /* ════════════════════════════════════════════════════════
        WAVEFORM BARS
        ════════════════════════════════════════════════════════ */
-    for (let i = 0; i < 28; i++) {
-      const b = document.createElement('div');
-      b.className = 'bar';
-      b.style.animationDelay = `${(i / 28 * 0.6).toFixed(2)}s`;
-      waveform.appendChild(b);
-    }
+            for (let i = 0; i < 28; i++) {
+                const b = document.createElement("div");
+                b.className = "bar";
+                b.style.animationDelay = `${((i / 28) * 0.6).toFixed(2)}s`;
+                waveform.appendChild(b);
+            }
 
-    /* ════════════════════════════════════════════════════════
+            /* ════════════════════════════════════════════════════════
        STATE MACHINE
        listening  → green mic border
        speaking   → speaker icon, purple
        thinking   → status text only
        (empty)    → idle
        ════════════════════════════════════════════════════════ */
-    function setState(s) {
-      document.body.className = s;
-      isSpeaking = (s === 'speaking');
-      if (s === 'listening') {
-        statusTxt.textContent = 'LISTENING...';
-        iconMic.style.display = 'block'; iconSpk.style.display = 'none';
-      } else if (s === 'speaking') {
-        statusTxt.textContent = 'FRED IS SPEAKING';
-        iconMic.style.display = 'none'; iconSpk.style.display = 'block';
-      } else if (s === 'thinking') {
-        statusTxt.textContent = 'FRED IS THINKING...';
-      } else {
-        statusTxt.textContent = 'TAP TO SPEAK';
-        iconMic.style.display = 'block'; iconSpk.style.display = 'none';
-      }
-    }
+            function setState(s) {
+                document.body.className = s;
+                isSpeaking = s === "speaking";
+                if (s === "listening") {
+                    statusTxt.textContent = "LISTENING...";
+                    iconMic.style.display = "block";
+                    iconSpk.style.display = "none";
+                } else if (s === "speaking") {
+                    statusTxt.textContent = "FRED IS SPEAKING";
+                    iconMic.style.display = "none";
+                    iconSpk.style.display = "block";
+                } else if (s === "thinking") {
+                    statusTxt.textContent = "FRED IS THINKING...";
+                } else {
+                    statusTxt.textContent = "TAP TO SPEAK";
+                    iconMic.style.display = "block";
+                    iconSpk.style.display = "none";
+                }
+            }
 
-    /* ════════════════════════════════════════════════════════
+            /* ════════════════════════════════════════════════════════
        TRANSCRIPT
        ════════════════════════════════════════════════════════ */
-    function addMsg(role, text) {
-      typing.classList.remove('active');
-      const m = document.createElement('div');
-      m.className = `msg ${role}`;
-      m.innerHTML = `<span class="msg-label">${role === 'user' ? 'YOU' : 'FRED AI'}</span><span class="msg-text">${text}</span>`;
-      scroll.insertBefore(m, typing);
-      scroll.scrollTop = scroll.scrollHeight;
-    }
+            function addMsg(role, text) {
+                typing.classList.remove("active");
+                const m = document.createElement("div");
+                m.className = `msg ${role}`;
+                m.innerHTML = `<span class="msg-label">${role === "user" ? "YOU" : "FRED AI"}</span><span class="msg-text">${text}</span>`;
+                scroll.insertBefore(m, typing);
+                scroll.scrollTop = scroll.scrollHeight;
+            }
 
-    /* ════════════════════════════════════════════════════════
+            /* ════════════════════════════════════════════════════════
        SPEECH RECOGNITION  (browser STT)
        ════════════════════════════════════════════════════════ */
-    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-    let rec = null;
-    if (SpeechRec) {
-      rec = new SpeechRec();
-      rec.lang = DEV.STT_LANG;
-      rec.onstart  = () => { isListening = true; setState('listening'); };
-      rec.onresult = (e) => processInput(e.results[0][0].transcript);
-      rec.onend    = () => { isListening = false; if (!isSpeaking) setState(''); };
-      rec.onerror  = (e) => { if (e.error !== 'aborted') addMsg('ai', `[Mic Error: ${e.error}]`); setState(''); };
-    }
+            const SpeechRec =
+                window.SpeechRecognition || window.webkitSpeechRecognition;
+            let rec = null;
+            if (SpeechRec) {
+                rec = new SpeechRec();
+                rec.lang = DEV.STT_LANG;
+                rec.onstart = () => {
+                    isListening = true;
+                    setState("listening");
+                };
+                rec.onresult = (e) => processInput(e.results[0][0].transcript);
+                rec.onend = () => {
+                    isListening = false;
+                    if (!isSpeaking) setState("");
+                };
+                rec.onerror = (e) => {
+                    if (e.error !== "aborted")
+                        addMsg("ai", `[Mic Error: ${e.error}]`);
+                    setState("");
+                };
+            }
 
-    /* ════════════════════════════════════════════════════════
+            /* ════════════════════════════════════════════════════════
        MAIN FLOW  — send to n8n → display → speak
        ════════════════════════════════════════════════════════ */
-    async function processInput(text) {
-      if (currentAudio) currentAudio.pause();
-      addMsg('user', text);
-      setState('thinking');
-      typing.classList.add('active');
+            async function processInput(text) {
+                if (currentAudio) currentAudio.pause();
+                addMsg("user", text);
+                setState("thinking");
+                typing.classList.add("active");
 
-      try {
-        const res = await fetch(DEV.N8N_URL, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ text, sessionId: SESSION_ID, phone: USER_PHONE })
-        });
-        const raw   = await res.text();
-        const clean = cleanForDisplay(raw);
-        // Parallel — scroll and TTS fire simultaneously, neither blocks the other
-        addMsg('ai', clean);
-        playFred(raw, clean);
-      } catch (err) {
-        addMsg('ai', '⚠ Connection issue. Check CORS on n8n.');
-        setState('');
-      }
-    }
-
-    /* ════════════════════════════════════════════════════════
-       TTS — xAI Grok TTS with browser fallback
-       Lowest-latency format: mp3 / 24 kHz / 128 kbps
-       ════════════════════════════════════════════════════════ */
-    async function playFred(tagged, fallback) {
-      setState('speaking');
-      try {
-        const res = await fetch(DEV.GROK_URL, {
-          method:  'POST',
-          headers: {
-            'Authorization': `Bearer ${DEV.GROK_KEY}`,
-            'Content-Type':  'application/json'
-          },
-          body: JSON.stringify({
-            text:      GROK_WRAP(tagged),
-            voice_id:  DEV.VOICE_ID,
-            language:  DEV.LANGUAGE,
-            output_format: {
-              codec:       DEV.AUDIO_CODEC,
-              sample_rate: DEV.AUDIO_SAMPLE_RATE,
-              bit_rate:    DEV.AUDIO_BIT_RATE
+                try {
+                    const res = await fetch(DEV.N8N_URL, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            text,
+                            sessionId: SESSION_ID,
+                            phone: USER_PHONE,
+                        }),
+                    });
+                    const raw = await res.text();
+                    const clean = cleanForDisplay(raw);
+                    // Parallel — scroll and TTS fire simultaneously, neither blocks the other
+                    addMsg("ai", clean);
+                    playFred(raw, clean);
+                } catch (err) {
+                    addMsg("ai", "⚠ Connection issue. Check CORS on n8n.");
+                    setState("");
+                }
             }
-          })
-        });
 
-        /* xAI returns raw audio bytes — wrap in a Blob for playback */
-        const blob     = await res.blob();
-        currentAudio   = new Audio(URL.createObjectURL(blob));
-        await currentAudio.play();
-        currentAudio.onended = () => setState('');
+            /* ════════════════════════════════════════════════════════
+       TTS — xAI Grok TTS (WebSocket streaming)
+       Opens a WS connection, sends text, pipes binary chunks
+       into a MediaSource for zero-delay playback.
+       Fallback: browser SpeechSynthesis.
+       ════════════════════════════════════════════════════════ */
+            async function playFred(tagged, fallback) {
+                setState("speaking");
+                const wsUrl = DEV.GROK_URL.replace(
+                    "https://",
+                    "wss://",
+                ).replace("/v1/tts", "/v1/tts");
 
-      } catch (e) {
-        /* Fallback: browser built-in speech synthesis */
-        const ut = new SpeechSynthesisUtterance(fallback);
-        ut.onend = () => setState('');
-        speechSynthesis.speak(ut);
-      }
-    }
+                let ws;
+                try {
+                    const audio = new Audio();
+                    const mediaSource = new MediaSource();
+                    audio.src = URL.createObjectURL(mediaSource);
 
-    /* ════════════════════════════════════════════════════════
+                    let sourceBuffer = null;
+
+                    mediaSource.addEventListener("sourceopen", () => {
+                        const mime = `audio/${DEV.AUDIO_CODEC === "mp3" ? "mpeg" : DEV.AUDIO_CODEC}`;
+                        sourceBuffer = mediaSource.addSourceBuffer(mime);
+                        sourceBuffer.mode = "sequence";
+                    });
+
+                    ws = new WebSocket(wsUrl);
+
+                    ws.onopen = () => {
+                        ws.send(
+                            JSON.stringify({
+                                api_key: DEV.GROK_KEY,
+                                text: GROK_WRAP(tagged),
+                                voice_id: DEV.VOICE_ID,
+                                language: DEV.LANGUAGE,
+                                output_format: {
+                                    codec: DEV.AUDIO_CODEC,
+                                    sample_rate: DEV.AUDIO_SAMPLE_RATE,
+                                    bit_rate: DEV.AUDIO_BIT_RATE,
+                                },
+                            }),
+                        );
+                    };
+
+                    ws.onmessage = async (ev) => {
+                        if (typeof ev.data === "string") return;
+                        const buf = ev.data;
+                        if (sourceBuffer && !sourceBuffer.updating) {
+                            sourceBuffer.appendBuffer(buf);
+                        } else if (sourceBuffer) {
+                            await new Promise((r) => {
+                                sourceBuffer.addEventListener("updateend", r, {
+                                    once: true,
+                                });
+                                sourceBuffer.appendBuffer(buf);
+                            });
+                        }
+                    };
+
+                    ws.onclose = () => {
+                        if (mediaSource.readyState === "open")
+                            mediaSource.endOfStream();
+                    };
+
+                    ws.onerror = () => {
+                        ws.close();
+                        throw new Error("WS error");
+                    };
+
+                    currentAudio = audio;
+                    audio.play().catch(() => {});
+                    audio.onended = () => {
+                        ws.close();
+                        setState("");
+                    };
+                } catch (e) {
+                    try {
+                        ws?.close();
+                    } catch {}
+                    const ut = new SpeechSynthesisUtterance(fallback);
+                    ut.onend = () => setState("");
+                    speechSynthesis.speak(ut);
+                }
+            }
+
+            /* ════════════════════════════════════════════════════════
        UI EVENTS
        ════════════════════════════════════════════════════════ */
-    micBtn.onclick = () => {
-      if (isListening) rec.stop();
-      else { if (isSpeaking && currentAudio) currentAudio.pause(); rec.start(); }
-    };
+            micBtn.onclick = () => {
+                if (isListening) rec.stop();
+                else {
+                    if (isSpeaking && currentAudio) currentAudio.pause();
+                    rec.start();
+                }
+            };
 
-    kbdToggle.onclick = () => {
-      const show = kbdWrap.style.display !== 'flex';
-      kbdWrap.style.display = show ? 'flex' : 'none';
-      if (show) kbdInput.focus();
-    };
+            kbdToggle.onclick = () => {
+                const show = kbdWrap.style.display !== "flex";
+                kbdWrap.style.display = show ? "flex" : "none";
+                if (show) kbdInput.focus();
+            };
 
-    kbdInput.onkeydown = (e) => {
-      if (e.key === 'Enter' && kbdInput.value.trim()) {
-        processInput(kbdInput.value);
-        kbdInput.value = '';
-        kbdWrap.style.display = 'none';
-      }
-    };
-  </script>
-</body>
+            kbdInput.onkeydown = (e) => {
+                if (e.key === "Enter" && kbdInput.value.trim()) {
+                    processInput(kbdInput.value);
+                    kbdInput.value = "";
+                    kbdWrap.style.display = "none";
+                }
+            };
+        </script>
+    </body>
 </html>
