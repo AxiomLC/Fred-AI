@@ -1,166 +1,370 @@
-/* ════════════════════════════════════════════════════════
-   W57TH · FRED AI  —  style.css  v1.1.0
-   ════════════════════════════════════════════════════════ */
-
+/* ═══ W57TH · FRED AI — style.css v1.2.0 ═══ */
 :root {
-  --grey-dark:    #0e0f11;
-  --grey-muted:   #6b7280;
-  --blue-glow:    #a78bfa;   /* purple idle / speaking accent */
-  --green-active: #22c55e;   /* mic border when listening     */
-
-  --font-display: 'Bebas Neue', sans-serif;
-  --font-body:    'Playfair Display', serif;
+    --grey-dark: #0e0f11;
+    --grey-muted: #6b7280;
+    --blue-glow: #a78bfa;
+    --green-active: #22c55e;
+    --font-display: "Bebas Neue", sans-serif;
+    --font-body: "Playfair Display", serif;
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
-  height: 100vh;
-  background: var(--grey-dark);
-  color: #fff;
-  font-family: var(--font-body);
-  overflow: hidden;
-  display: flex; justify-content: center; align-items: flex-start;
-  padding-top: 20px;
+    height: 100vh;
+    background: var(--grey-dark);
+    color: #fff;
+    font-family: var(--font-body);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
 }
 
-/* ── BACKGROUND ─────────────────────────────────────────
-   DEV: swap the unsplash URL for any full-bleed image.
-   ────────────────────────────────────────────────────── */
+/* 1. BACKGROUND */
 #bg {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: url('https://images.unsplash.com/photo-1522083165195-3424ed129620?auto=format&fit=crop&q=80&w=2000') center/cover;
-  opacity: 0.15; z-index: -2;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("https://images.unsplash.com/photo-1522083165195-3424ed129620?auto=format&fit=crop&q=80&w=2000")
+        center/cover;
+    opacity: 0.15;
+    z-index: -2;
 }
-
 #bg-vignette {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: radial-gradient(circle at center, transparent 20%, #000 100%);
-  z-index: -1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, transparent 20%, #000 100%);
+    z-index: -1;
 }
 
-/* ── LAYOUT ─────────────────────────────────────────── */
+/* 2. LAYOUT */
 #app {
-  width: 90%; max-width: 500px;
-  display: flex; flex-direction: column; gap: 10px;
+    width: 90%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-/* ── LOGO ───────────────────────────────────────────── */
-#logo-wrap { text-align: center; }
+/* 3. LOGO */
+#logo-wrap {
+    text-align: center;
+}
+#logo-wrap img {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 8px;
+    border-radius: 50%;
+}
+#brand-fred {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 1.5rem;
+    color: var(--blue-glow);
+}
+#brand-w57 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 3px;
+    margin-left: 6px;
+}
+#tagline {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 4px;
+    color: var(--grey-muted);
+    margin-top: 2px;
+}
 
-/* DEV: change width/height to resize the logo */
-#logo-wrap img { width: 52px; height: 52px; margin-bottom: 8px; border-radius: 50%; }
-
-#brand-fred { font-family: var(--font-body); font-style: italic; font-size: 1.5rem; color: var(--blue-glow); }
-#brand-w57  { font-family: var(--font-display); font-size: 1.1rem; color: rgba(255,255,255,0.45); letter-spacing: 3px; margin-left: 6px; }
-#tagline    { font-family: var(--font-display); font-size: 0.65rem; letter-spacing: 4px; color: var(--grey-muted); margin-top: 2px; }
-
-/* ── TRANSCRIPT ─────────────────────────────────────── */
+/* 4. TRANSCRIPT */
 #transcript-wrap {
-  background: rgba(14, 15, 17, 0.85);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 12px; padding: 16px;
-  height: 280px; display: flex; flex-direction: column;
+    background: rgba(14, 15, 17, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 16px;
+    height: 320px;
+    display: flex;
+    flex-direction: column;
+}
+@media (min-width: 768px) {
+    #transcript-wrap {
+        height: 420px;
+    }
 }
 
 #transcript-header {
-  font-family: var(--font-display); font-size: 0.65rem;
-  letter-spacing: 2px; color: var(--blue-glow); margin-bottom: 12px;
-  display: flex; align-items: center; gap: 6px;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--blue-glow);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
-
 .dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--blue-glow);
-  animation: blink 1.4s infinite;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--blue-glow);
+    animation: blink 1.4s infinite;
 }
-
-#transcript-scroll { flex: 1; overflow-y: auto; padding-right: 8px; }
-
-.msg { margin-bottom: 12px; animation: fadeIn 0.4s ease forwards; }
+#transcript-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+.msg {
+    margin-bottom: 12px;
+    animation: fadeIn 0.4s ease forwards;
+}
 .msg-label {
-  display: block;
-  font-family: var(--font-display); font-size: 0.6rem;
-  letter-spacing: 1px; color: var(--grey-muted); margin-bottom: 3px;
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    color: var(--grey-muted);
+    margin-bottom: 3px;
 }
-.msg.user .msg-label { color: var(--blue-glow); }
+.msg.user .msg-label {
+    color: var(--blue-glow);
+}
+.msg-text {
+    font-family: var(--font-body);
+    font-size: 0.93rem;
+    line-height: 1.55;
+    color: #e5e7eb;
+}
 
-/* ═══════════════════════════════════════════════════════
-   TRANSCRIPT TEXT FONT
-   DEV: change font-family here to restyle the chat text.
-   Options already loaded: 'Playfair Display', 'Bebas Neue'
-   Add a new Google Fonts <link> in index.html to use others.
-   ═══════════════════════════════════════════════════════ */
-.msg-text { font-family: var(--font-body); font-size: 0.93rem; line-height: 1.55; color: #e5e7eb; }
-
-/* ── TYPING DOTS ─────────────────────────────────────── */
-#typing { display: none; gap: 4px; padding: 4px 0; }
-#typing.active { display: flex; }
+/* 5. TYPING */
+#typing {
+    display: none;
+    gap: 4px;
+    padding: 4px 0;
+}
+#typing.active {
+    display: flex;
+}
 #typing span {
-  width: 4px; height: 4px; background: var(--blue-glow);
-  border-radius: 50%; animation: blink 1.4s infinite;
+    width: 4px;
+    height: 4px;
+    background: var(--blue-glow);
+    border-radius: 50%;
+    animation: blink 1.4s infinite;
 }
-#typing span:nth-child(2) { animation-delay: 0.2s; }
-#typing span:nth-child(3) { animation-delay: 0.4s; }
+#typing span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+#typing span:nth-child(3) {
+    animation-delay: 0.4s;
+}
 
-/* ── CONTROLS ────────────────────────────────────────── */
-#controls { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-
+/* 6. CONTROLS */
+#controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
 #text-input-wrap {
-  display: none; width: 100%;
-  animation: slideUp 0.3s ease;
+    display: none;
+    width: 100%;
+    animation: slideUp 0.3s ease;
 }
 #text-input-field {
-  width: 100%; padding: 10px 18px; border-radius: 30px;
-  background: rgba(255,255,255,0.05); border: 1px solid rgba(167,139,250,0.3);
-  color: #fff; outline: none; font-family: var(--font-body);
+    width: 100%;
+    padding: 10px 18px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    color: #fff;
+    outline: none;
+    font-family: var(--font-body);
 }
 
-/* ── MIC BUTTON ─────────────────────────────────────────
-   Idle:      purple border  (--blue-glow)
-   Listening: green border   (--green-active)  ← body.listening
-   Speaking:  purple border
-   ────────────────────────────────────────────────────── */
+/* 7. MIC BUTTON */
 #mic-btn {
-  width: 62px; height: 62px; border-radius: 50%;
-  background: rgba(14, 15, 17, 0.9);
-  border: 2px solid var(--blue-glow);
-  cursor: pointer; transition: border-color 0.25s, box-shadow 0.25s;
-  display: flex; justify-content: center; align-items: center;
-  box-shadow: 0 0 12px rgba(167, 139, 250, 0.2);
-  color: var(--blue-glow);   /* SVG stroke inherits currentColor */
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: rgba(14, 15, 17, 0.9);
+    border: 2px solid var(--blue-glow);
+    cursor: pointer;
+    transition:
+        border-color 0.25s,
+        box-shadow 0.25s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 12px rgba(167, 139, 250, 0.2);
+    color: var(--blue-glow);
 }
-#mic-btn:hover { box-shadow: 0 0 22px rgba(167, 139, 250, 0.4); }
-
+#mic-btn:hover {
+    box-shadow: 0 0 22px rgba(167, 139, 250, 0.4);
+}
 body.listening #mic-btn {
-  border-color: var(--green-active);
-  box-shadow: 0 0 18px rgba(34, 197, 94, 0.45);
-  color: var(--green-active);
+    border-color: var(--green-active);
+    box-shadow: 0 0 18px rgba(34, 197, 94, 0.45);
+    color: var(--green-active);
+}
+#status-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+#status-text {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: var(--grey-muted);
+}
+#keyboard-toggle {
+    cursor: pointer;
+    font-size: 1.1rem;
+    opacity: 0.55;
+    transition: 0.2s;
+}
+#keyboard-toggle:hover {
+    opacity: 1;
 }
 
-#status-row { display: flex; align-items: center; gap: 10px; }
-#status-text { font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 2px; color: var(--grey-muted); }
-#keyboard-toggle { cursor: pointer; font-size: 1.1rem; opacity: 0.55; transition: 0.2s; }
-#keyboard-toggle:hover { opacity: 1; }
-
-/* ── WAVEFORM ────────────────────────────────────────── */
-#waveform { display: flex; align-items: center; gap: 3px; height: 24px; opacity: 0; transition: opacity 0.3s; }
+/* 8. WAVEFORM */
+#waveform {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 24px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
 body.listening #waveform,
-body.speaking  #waveform { opacity: 1; }
+body.speaking #waveform {
+    opacity: 1;
+}
 .bar {
-  width: 3px; height: 8px; background: var(--blue-glow);
-  border-radius: 2px; animation: pulse 0.6s infinite alternate;
+    width: 3px;
+    height: 8px;
+    background: var(--blue-glow);
+    border-radius: 2px;
+    animation: pulse 0.6s infinite alternate;
 }
-body.listening .bar { background: var(--green-active); }
+body.listening .bar {
+    background: var(--green-active);
+}
 
-/* ── FOOTER ─────────────────────────────────────────── */
+/* 9. MEDIA VIEWER */
+#media-viewer {
+    display: none;
+    width: 90%;
+    max-width: 560px;
+    background: rgba(14, 15, 17, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-top: 8px;
+}
+#media-viewer-header {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--blue-glow);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+#media-viewer-track {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+.media-thumb {
+    flex: 0 0 auto;
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.media-thumb:hover {
+    transform: scale(1.05);
+}
+.media-thumb img,
+.media-thumb video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.media-thumb .media-pdf {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: var(--blue-glow);
+}
+
+/* 10. FOOTER */
 #footer {
-  font-family: var(--font-display); font-size: 0.5rem;
-  letter-spacing: 3px; color: rgba(255,255,255,0.18); text-align: center;
+    font-family: var(--font-display);
+    font-size: 0.5rem;
+    letter-spacing: 3px;
+    color: rgba(255, 255, 255, 0.18);
+    text-align: center;
 }
 
-/* ── ANIMATIONS ─────────────────────────────────────── */
-@keyframes pulse    { from { height: 8px;  } to { height: 22px; } }
-@keyframes blink    { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-@keyframes fadeIn   { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideUp  { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* 11. ANIMATIONS */
+@keyframes pulse {
+    from {
+        height: 8px;
+    }
+    to {
+        height: 22px;
+    }
+}
+@keyframes blink {
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
