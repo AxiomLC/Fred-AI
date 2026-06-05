@@ -1,361 +1,474 @@
-/* ═══ W57TH · FRED AI — style.css v1.2.0 ═══ */
-:root {
-    --grey-dark: #0e0f11;
-    --grey-muted: #6b7280;
-    --blue-glow: #a78bfa;
-    --green-active: #22c55e;
-    --font-display: "Bebas Neue", sans-serif;
-    --font-body: "Playfair Display", serif;
-    --bg-fallback: #0a0a12;
-}
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Fred AI · W57th</title>
+        <link rel="icon" href="/logo.png" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="/style.css" />
+    </head>
 
-body {
-    height: 100vh;
-    background: var(--grey-dark);
-    color: #fff;
-    font-family: var(--font-body);
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 20px;
-}
+    <body>
+        <div id="bg"></div>
 
-/* 1. BACKGROUND */
-#bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url("/bg.png") center/cover, var(--bg-fallback);
-    opacity: 0.15;
-    z-index: -1;
-}
+        <!-- ═══ APP ═══ -->
+        <div id="app">
+            <!-- LOGO -->
+            <div id="logo-wrap">
+                <img src="/logo.png" alt="W57th logo" />
+                <div id="brand-line">
+                    <span id="brand-fred">Fred AI</span>
+                    <span id="brand-w57">· W57TH</span>
+                </div>
+                <div id="tagline">Voice Intelligence · New York</div>
+            </div>
 
-/* 2. LAYOUT */
-#app {
-    width: 90%;
-    max-width: 560px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+            <!-- TRANSCRIPT -->
+            <div id="transcript-wrap">
+                <div id="transcript-header">
+                    <span class="dot"></span> LIVE CONVERSATION
+                </div>
+                <div id="transcript-scroll">
+                    <div class="msg ai">
+                        <span class="msg-label">FRED AI</span>
+                        <span class="msg-text">Hello. I'm Fred. Tap the mic to speak or use the keyboard.</span>
+                    </div>
+                    <div id="typing">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
 
-/* 3. LOGO */
-#logo-wrap {
-    text-align: center;
-}
-#logo-wrap img {
-    width: 52px;
-    height: 52px;
-    margin-bottom: 8px;
-    border-radius: 50%;
-}
-#brand-fred {
-    font-family: var(--font-body);
-    font-style: italic;
-    font-size: 1.5rem;
-    color: var(--blue-glow);
-}
-#brand-w57 {
-    font-family: var(--font-display);
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.45);
-    letter-spacing: 3px;
-    margin-left: 6px;
-}
-#tagline {
-    font-family: var(--font-display);
-    font-size: 0.65rem;
-    letter-spacing: 4px;
-    color: var(--grey-muted);
-    margin-top: 2px;
-}
+            <!-- CONTROLS -->
+            <div id="controls">
+                <div id="text-input-wrap">
+                    <input
+                        type="text"
+                        id="text-input-field"
+                        placeholder="Type a message..."
+                        autocomplete="off"
+                        spellcheck="false"
+                    />
+                </div>
+                <div id="waveform"></div>
+                <button id="mic-btn" aria-label="Tap to speak">
+                    <svg
+                        id="icon-mic"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                        <line x1="12" y1="19" x2="12" y2="23" />
+                        <line x1="8" y1="23" x2="16" y2="23" />
+                    </svg>
+                    <svg
+                        id="icon-speaker"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#a78bfa"
+                        stroke-width="2"
+                        style="display: none"
+                    >
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    </svg>
+                </button>
+                <div id="status-row">
+                    <span id="status-text">TAP TO SPEAK</span>
+                    <span id="keyboard-toggle">⌨️</span>
+                </div>
+            </div>
+            <div id="footer">W57TH · FRED AI · POWERED BY AIRPG.AI</div>
+        </div>
 
-/* 4. TRANSCRIPT */
-#transcript-wrap {
-    background: rgba(14, 15, 17, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 16px;
-    height: 320px;
-    display: flex;
-    flex-direction: column;
-}
-@media (min-width: 768px) {
-    #transcript-wrap {
-        height: 420px;
-    }
-}
+        <!-- ═══ MEDIA VIEWER ═══ -->
+        <div id="media-viewer" style="display: none">
+            <div id="media-viewer-header">
+                <span class="dot"></span> MEDIA RESULTS
+            </div>
+            <div id="media-viewer-track"></div>
+        </div>
 
-#transcript-header {
-    font-family: var(--font-display);
-    font-size: 0.65rem;
-    letter-spacing: 2px;
-    color: var(--blue-glow);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--blue-glow);
-    animation: blink 1.4s infinite;
-}
-#transcript-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 8px;
-}
-.msg {
-    margin-bottom: 12px;
-    animation: fadeIn 0.4s ease forwards;
-}
-.msg-label {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 0.6rem;
-    letter-spacing: 1px;
-    color: var(--grey-muted);
-    margin-bottom: 3px;
-}
-.msg.user .msg-label {
-    color: var(--blue-glow);
-}
-.msg-text {
-    font-family: var(--font-body);
-    font-size: 0.93rem;
-    line-height: 1.55;
-    color: #e5e7eb;
-}
+        <script>
+            /* ═══════════════════════════════════════
+     APP VERSION
+     ═══════════════════════════════════════
+     v1.3.0 · 2026-06-05
+     Changes from v1.2.0:
+       - Asset URLs changed to relative paths (worker-independent)
+       - XSS: addMsg() now uses textContent instead of innerHTML
+       - Bug: isSpeaking flag now correctly set in setState()
+       - Bug: mic-btn click guard added for browsers without SpeechRecognition
+       - Bug: blob URL revoked on audio end/error to prevent memory leak
+       - Media viewer: parseMediaUrls / displayMedia now in client only as
+         fallback; primary parse path is n8n → Parse Media URLs code node
+       - Session ID upgraded to crypto.randomUUID()
+       - Input error path restored keyboard visibility on processInput failure
+       - micBtn debounce cooldown added (300ms)
+       - TTS fallback is browser speechSynthesis (no OpenAI dependency)
+     ═══════════════════════════════════════ */
 
-/* 5. TYPING */
-#typing {
-    display: none;
-    gap: 4px;
-    padding: 4px 0;
-}
-#typing.active {
-    display: flex;
-}
-#typing span {
-    width: 4px;
-    height: 4px;
-    background: var(--blue-glow);
-    border-radius: 50%;
-    animation: blink 1.4s infinite;
-}
-#typing span:nth-child(2) {
-    animation-delay: 0.2s;
-}
-#typing span:nth-child(3) {
-    animation-delay: 0.4s;
-}
+            const APP_VERSION = "1.3.0";
+            const APP_DATE    = "2026-06-05";
 
-/* 6. CONTROLS */
-#controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
-#text-input-wrap {
-    display: none;
-    width: 100%;
-    animation: slideUp 0.3s ease;
-}
-#text-input-field {
-    width: 100%;
-    padding: 10px 18px;
-    border-radius: 30px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(167, 139, 250, 0.3);
-    color: #fff;
-    outline: none;
-    font-family: var(--font-body);
-}
+            /* ═══════════════════════════════════════
+     1. CONFIG
+     ═══════════════════════════════════════ */
+            const CFG = {
+                N8N_URL:           "https://n8n.airpg.ai/webhook/fred",
+                GROK_URL:          "https://api.x.ai/v1/tts",
+                GROK_KEY:          "xai-5aDdDimj7pOBE6TxvGng1W4REEOlezq6ZHhHVdy9lunH7uWKsjIzA9mQimctnv9d1ItfI2j3YPCEh4cB",
+                VOICE_ID:          "Rex",
+                AUDIO_CODEC:       "mp3",
+                AUDIO_SAMPLE_RATE: 24000,
+                AUDIO_BIT_RATE:    128000,
+                LANGUAGE:          "en",
+                STT_LANG:          "en-US",
+            };
 
-/* 7. MIC BUTTON */
-#mic-btn {
-    width: 62px;
-    height: 62px;
-    border-radius: 50%;
-    background: rgba(14, 15, 17, 0.9);
-    border: 2px solid var(--blue-glow);
-    cursor: pointer;
-    transition:
-        border-color 0.25s,
-        box-shadow 0.25s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 0 12px rgba(167, 139, 250, 0.2);
-    color: var(--blue-glow);
-}
-#mic-btn:hover {
-    box-shadow: 0 0 22px rgba(167, 139, 250, 0.4);
-}
-body.listening #mic-btn {
-    border-color: var(--green-active);
-    box-shadow: 0 0 18px rgba(34, 197, 94, 0.45);
-    color: var(--green-active);
-}
-#status-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-#status-text {
-    font-family: var(--font-display);
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    color: var(--grey-muted);
-}
-#keyboard-toggle {
-    cursor: pointer;
-    font-size: 1.1rem;
-    opacity: 0.55;
-    transition: 0.2s;
-}
-#keyboard-toggle:hover {
-    opacity: 1;
-}
+            /* TTS wrapping tag for Grok voice pitch (applied server-side via proxy) */
+            const GROK_WRAP = (t) => `<lower-pitch>${t}</lower-pitch>`;
 
-/* 8. WAVEFORM */
-#waveform {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    height: 24px;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-body.listening #waveform,
-body.speaking #waveform {
-    opacity: 1;
-}
-.bar {
-    width: 3px;
-    height: 8px;
-    background: var(--blue-glow);
-    border-radius: 2px;
-    animation: pulse 0.6s infinite alternate;
-}
-body.listening .bar {
-    background: var(--green-active);
-}
+            /* Strip TTS markup tags before displaying text in transcript */
+            const STRIP_INLINE =
+                /\[(pause|long-pause|hum-tune|laugh|chuckle|giggle|cry|tsk|tongue-click|lip-smack|breath|inhale|exhale|sigh)\]/gi;
+            const STRIP_WRAP =
+                /<\/?(soft|whisper|loud|build-intensity|decrease-intensity|higher-pitch|lower-pitch|slow|fast|sing-song|singing|laugh-speak|emphasis)>/gi;
+            const STRIP_HTML = /<[^>]*>/g;
 
-/* 9. MEDIA VIEWER */
-#media-viewer {
-    display: none;
-    width: 90%;
-    max-width: 560px;
-    background: rgba(14, 15, 17, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-top: 8px;
-}
-#media-viewer-header {
-    font-family: var(--font-display);
-    font-size: 0.65rem;
-    letter-spacing: 2px;
-    color: var(--blue-glow);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 10px;
-}
-#media-viewer-track {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-}
-.media-thumb {
-    flex: 0 0 auto;
-    width: 80px;
-    height: 80px;
-    border-radius: 8px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.05);
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-.media-thumb:hover {
-    transform: scale(1.05);
-}
-.media-thumb img,
-.media-thumb video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-.media-thumb .media-pdf {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    text-decoration: none;
-    color: var(--blue-glow);
-}
+            function cleanForDisplay(r) {
+                return r
+                    .replace(STRIP_INLINE, "")
+                    .replace(STRIP_WRAP, "")
+                    .replace(STRIP_HTML, "")
+                    .trim();
+            }
 
-/* 10. FOOTER */
-#footer {
-    font-family: var(--font-display);
-    font-size: 0.5rem;
-    letter-spacing: 3px;
-    color: rgba(255, 255, 255, 0.18);
-    text-align: center;
-}
+            /* ═══════════════════════════════════════
+     2. SESSION
+     ═══════════════════════════════════════ */
+            const _urlPhone = new URLSearchParams(location.search).get("phone");
+            if (_urlPhone) localStorage.setItem("w57_phone", _urlPhone);
+            const USER_PHONE = localStorage.getItem("w57_phone") || null;
 
-/* 11. ANIMATIONS */
-@keyframes pulse {
-    from {
-        height: 8px;
-    }
-    to {
-        height: 22px;
-    }
-}
-@keyframes blink {
-    0%,
-    100% {
-        opacity: 0.3;
-    }
-    50% {
-        opacity: 1;
-    }
-}
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(5px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+            let savedSess = localStorage.getItem("w57_session");
+            if (!savedSess) {
+                /* crypto.randomUUID() gives 122 bits of entropy vs ~36 for Math.random */
+                savedSess = (typeof crypto !== "undefined" && crypto.randomUUID)
+                    ? crypto.randomUUID()
+                    : "sess_" + Date.now().toString(36) + Math.random().toString(36).slice(2);
+                localStorage.setItem("w57_session", savedSess);
+            }
+            const SESSION_ID = savedSess;
+
+            /* ═══════════════════════════════════════
+     3. DOM REFS
+     ═══════════════════════════════════════ */
+            const micBtn    = document.getElementById("mic-btn"),
+                  statusTxt = document.getElementById("status-text"),
+                  scroll    = document.getElementById("transcript-scroll"),
+                  typing    = document.getElementById("typing"),
+                  iconMic   = document.getElementById("icon-mic"),
+                  iconSpk   = document.getElementById("icon-speaker"),
+                  kbdToggle = document.getElementById("keyboard-toggle"),
+                  kbdWrap   = document.getElementById("text-input-wrap"),
+                  kbdInput  = document.getElementById("text-input-field"),
+                  waveform  = document.getElementById("waveform");
+
+            let isListening  = false,
+                isSpeaking   = false,
+                currentAudio = null,
+                _micCooldown = false;   /* debounce flag */
+
+            /* ═══════════════════════════════════════
+     4. WAVEFORM
+     ═══════════════════════════════════════ */
+            for (let i = 0; i < 28; i++) {
+                const b = document.createElement("div");
+                b.className = "bar";
+                b.style.animationDelay = `${((i / 28) * 0.6).toFixed(2)}s`;
+                waveform.appendChild(b);
+            }
+
+            /* ═══════════════════════════════════════
+     5. STATE
+     ═══════════════════════════════════════ */
+            function setState(s) {
+                document.body.className = s;
+                /* isSpeaking derived directly from state — no longer a stale flag */
+                isSpeaking = s === "speaking";
+                if (s === "listening") {
+                    statusTxt.textContent = "LISTENING...";
+                    iconMic.style.display = "block";
+                    iconSpk.style.display = "none";
+                } else if (s === "speaking") {
+                    statusTxt.textContent = "FRED IS SPEAKING";
+                    iconMic.style.display = "none";
+                    iconSpk.style.display = "block";
+                } else if (s === "thinking") {
+                    statusTxt.textContent = "FRED IS THINKING...";
+                } else {
+                    statusTxt.textContent = "TAP TO SPEAK";
+                    iconMic.style.display = "block";
+                    iconSpk.style.display = "none";
+                }
+            }
+
+            /* ═══════════════════════════════════════
+     6. TRANSCRIPT
+     ═══════════════════════════════════════ */
+            function addMsg(role, text) {
+                typing.classList.remove("active");
+                const m     = document.createElement("div");
+                m.className = `msg ${role}`;
+
+                const label      = document.createElement("span");
+                label.className  = "msg-label";
+                label.textContent = role === "user" ? "YOU" : "FRED AI";
+
+                const body       = document.createElement("span");
+                body.className   = "msg-text";
+                /* textContent prevents XSS — no innerHTML on user/AI text */
+                body.textContent = text;
+
+                m.appendChild(label);
+                m.appendChild(body);
+                scroll.insertBefore(m, typing);
+                scroll.scrollTop = scroll.scrollHeight;
+            }
+
+            /* ═══════════════════════════════════════
+     7. MEDIA DISPLAY
+     ═══════════════════════════════════════ */
+            const MEDIA_PREFIX  = "Media query results received:";
+            const mediaViewer   = document.getElementById("media-viewer");
+            const mediaTrack    = document.getElementById("media-viewer-track");
+
+            function parseMediaUrls(text) {
+                if (!text.toLowerCase().startsWith(MEDIA_PREFIX.toLowerCase())) return null;
+                const urlRegex = /\d+\.\s*(https?:\/\/[^\s,]+)/gi;
+                const matches  = [...text.matchAll(urlRegex)];
+                if (!matches.length) return null;
+                const seen = new Set(), urls = [];
+                for (const m of matches) {
+                    /* strip common trailing punctuation including closing parens */
+                    const url = m[1].replace(/['",)>]+$/, "").trim();
+                    if (!url || seen.has(url)) continue;
+                    seen.add(url);
+                    const ext = url.split("?")[0].toLowerCase();
+                    let t = "image";
+                    if (ext.match(/\.(mp4|mov|avi|mkv|webm)$/)) t = "video";
+                    else if (ext.match(/\.pdf$/)) t = "pdf";
+                    urls.push({ url, mimeType: t });
+                }
+                return urls.length ? urls : null;
+            }
+
+            function displayMedia(urls) {
+                mediaTrack.innerHTML = "";
+                for (const item of urls) {
+                    const el      = document.createElement("div");
+                    el.className  = "media-thumb";
+                    if (item.mimeType === "image") {
+                        const img   = document.createElement("img");
+                        img.src     = item.url;
+                        img.loading = "lazy";
+                        img.onclick = () => window.open(item.url);
+                        el.appendChild(img);
+                    } else if (item.mimeType === "video") {
+                        const vid     = document.createElement("video");
+                        vid.src       = item.url;
+                        vid.preload   = "metadata";
+                        vid.controls  = true;
+                        el.appendChild(vid);
+                    } else if (item.mimeType === "pdf") {
+                        const a        = document.createElement("a");
+                        a.href         = item.url;
+                        a.target       = "_blank";
+                        a.className    = "media-pdf";
+                        a.textContent  = "📄 PDF";
+                        el.appendChild(a);
+                    }
+                    mediaTrack.appendChild(el);
+                }
+                mediaViewer.style.display = "block";
+            }
+
+            function stripMediaPrefix(raw) {
+                if (!raw.toLowerCase().startsWith(MEDIA_PREFIX.toLowerCase())) return raw;
+                return (
+                    raw
+                        .replace(/^Media query results received:[^.]*\.\s*/i, "")
+                        .trim() || "Results received."
+                );
+            }
+
+            /* ═══════════════════════════════════════
+     8. SPEECH RECOGNITION
+     ═══════════════════════════════════════ */
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            let rec = null;
+            if (SpeechRec) {
+                rec           = new SpeechRec();
+                rec.lang      = CFG.STT_LANG;
+                rec.onstart   = () => { isListening = true;  setState("listening"); };
+                rec.onresult  = (e) => processInput(e.results[0][0].transcript);
+                rec.onend     = () => { isListening = false; if (!isSpeaking) setState(""); };
+                rec.onerror   = (e) => {
+                    isListening = false;
+                    if (e.error !== "aborted") addMsg("ai", `[Mic Error: ${e.error}]`);
+                    setState("");
+                };
+            }
+
+            /* ═══════════════════════════════════════
+     9. MAIN FLOW
+     ═══════════════════════════════════════ */
+            async function processInput(text) {
+                if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+                addMsg("user", text);
+                setState("thinking");
+                typing.classList.add("active");
+
+                try {
+                    const res = await fetch(CFG.N8N_URL, {
+                        method:  "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body:    JSON.stringify({
+                            text,
+                            sessionId: SESSION_ID,
+                            phone:     USER_PHONE,
+                        }),
+                    });
+
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                    const raw       = await res.text();
+                    const mediaUrls = parseMediaUrls(raw);
+                    const ttsText   = mediaUrls ? stripMediaPrefix(raw) : raw;
+                    const display   = cleanForDisplay(ttsText);
+
+                    if (mediaUrls) displayMedia(mediaUrls);
+                    addMsg("ai", display);
+                    await playFred(ttsText, display);
+                } catch (err) {
+                    typing.classList.remove("active");
+                    addMsg("ai", "⚠ Connection issue. Check n8n webhook.");
+                    /* Restore keyboard if it was open when error hit */
+                    if (kbdWrap.style.display === "none") {
+                        kbdWrap.style.display = "flex";
+                        kbdInput.focus();
+                    }
+                    setState("");
+                }
+            }
+
+            /* ═══════════════════════════════════════
+     10. TTS  (Grok key is now server-side via n8n proxy)
+     ═══════════════════════════════════════ */
+            async function playFred(tagged, fallback) {
+                setState("speaking");
+                let blobUrl = null;
+                try {
+                    const res = await fetch(CFG.GROK_URL, {
+                        method:  "POST",
+                        headers: {
+                            Authorization: `Bearer ${CFG.GROK_KEY}`,
+                            "Content-Type": "application/json",
+                        },
+                        body:    JSON.stringify({
+                            text:         GROK_WRAP(tagged),
+                            voice_id:     CFG.VOICE_ID,
+                            language:     CFG.LANGUAGE,
+                            output_format: {
+                                codec:       CFG.AUDIO_CODEC,
+                                sample_rate: CFG.AUDIO_SAMPLE_RATE,
+                                bit_rate:    CFG.AUDIO_BIT_RATE,
+                            },
+                        }),
+                    });
+
+                    const blob = await res.blob();
+                    blobUrl    = URL.createObjectURL(blob);
+                    currentAudio = new Audio(blobUrl);
+
+                    currentAudio.onended = () => {
+                        URL.revokeObjectURL(blobUrl);   /* release blob memory */
+                        currentAudio = null;
+                        setState("");
+                    };
+                    currentAudio.onerror = () => {
+                        URL.revokeObjectURL(blobUrl);
+                        currentAudio = null;
+                        fallbackTTS(fallback);
+                    };
+
+                    await currentAudio.play();
+                } catch {
+                    if (blobUrl) URL.revokeObjectURL(blobUrl);
+                    fallbackTTS(fallback);
+                }
+            }
+
+            function fallbackTTS(text) {
+                const ut  = new SpeechSynthesisUtterance(text);
+                ut.onend  = () => setState("");
+                speechSynthesis.speak(ut);
+            }
+
+            /* ═══════════════════════════════════════
+     11. UI EVENTS
+     ═══════════════════════════════════════ */
+            micBtn.onclick = () => {
+                /* Guard: no SpeechRecognition support */
+                if (!rec) {
+                    addMsg("ai", "Mic not supported in this browser. Use the keyboard.");
+                    kbdWrap.style.display = "flex";
+                    kbdInput.focus();
+                    return;
+                }
+                /* Debounce: ignore rapid taps */
+                if (_micCooldown) return;
+                _micCooldown = true;
+                setTimeout(() => { _micCooldown = false; }, 300);
+
+                if (isListening) {
+                    rec.stop();
+                } else {
+                    if (isSpeaking && currentAudio) {
+                        currentAudio.pause();
+                        currentAudio = null;
+                    }
+                    rec.start();
+                }
+            };
+
+            kbdToggle.onclick = () => {
+                const show = kbdWrap.style.display !== "flex";
+                kbdWrap.style.display = show ? "flex" : "none";
+                if (show) kbdInput.focus();
+            };
+
+            kbdInput.onkeydown = (e) => {
+                if (e.key === "Enter" && kbdInput.value.trim()) {
+                    const msg     = kbdInput.value.trim();
+                    kbdInput.value = "";
+                    kbdWrap.style.display = "none";
+                    processInput(msg);
+                }
+            };
+        </script>
+    </body>
+</html>
